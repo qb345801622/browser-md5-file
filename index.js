@@ -1,1 +1,1 @@
-module.exports = require('./src/js/main');
+module.exports = require('./src/browser-md5-file');
