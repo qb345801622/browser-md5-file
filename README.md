@@ -1,78 +1,54 @@
-# nice-bar [![Build Status](https://travis-ci.org/forsigner/nice-bar.svg?branch=master)](https://travis-ci.org/forsigner/nice-bar) [![NPM Version](http://img.shields.io/npm/v/nice-bar.svg?style=flat)](https://www.npmjs.org/package/nice-bar)
+# browser-md5-file
 
-A nice and lightweight scrollbar.
+MD5 file in browser.
 
-## Demo
+### Demo
 
-[demo](http://forsigner.com/nice-bar)
+[demo](http://forsigner.com/browser-md5-file)
 
-## Features
 
-- Lightweight
-- Nice looking
-- Customize
-- No jQuery dependency
+### Install
 
-## Install
-
-### bower
+##### bower
 
 ```bash
-$ bower install nice-bar --save
+$ bower install browser-md5-file --save
 ```
 
-### npm
+##### npm
 
 ```bash
-$ npm install nice-bar --save
+$ npm install browser-md5-file --save
 ```
 
-## Usage
+### Usage
 
 ```html
-<link rel="stylesheet" href="bower_components/nice-bar/dist/css/nice-bar.min.css" />
-<script src="bower_components/nice-bar/dist/js/nice-bar.js"></script>
-
-<style>
-  .container {
-    height: 500px; /* height is the only css property required */
-    /* height: 100%; work also*/
-  }
-</style>
-
-<div id="container" class="container">
-  <!--content-->
-</div>
+<script src="bower_components/browser-md5-file/dist/browser-md5-file.js"></script>
 ```
 
 ```js
-niceBar.init(document.getElementById('#container'));
+var el = document.getElementById('upload');
+el.addEventListener('change', handle, false);
 
-// set theme
-niceBar.init(document.getElementById('#container'), {theme: 'dark'});
-
-```
-
-#### Custom theme
-
-You can custom scrollbar style with CSS easily:
-
-``` CSS
-.nice-bar .nice-bar-slider-y {
-  background: #222;
-  /* whatever */
+function handle(e) {
+  var file = e.target.files[0];
+  browserMD5File(file, function (err, md5) {
+    console.log(md5); // 97027eb624f85892c69c4bcec8ab0f11
+  });
 }
+
 ```
 
-## Browser compatibility
+### Browser compatibility
 
-- IE8+
+- IE10+
 - Firefox
 - Chrome
 - Safari
 - Opera
 
 
-## License
+### License
 
   [MIT](LICENSE)
