@@ -1,6 +1,6 @@
 # browser-md5-file
 
-MD5 file in browser.
+MD5 file in browser. Base on [js-spark-md5](https://github.com/satazor/js-spark-md5).
 
 ### Demo
 
