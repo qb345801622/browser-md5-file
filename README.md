@@ -70,7 +70,7 @@ $('#upload').bind('change', function () {
 
 ### Browser compatibility
 
-- IE10+
+- IE9+
 - Firefox
 - Chrome
 - Safari
