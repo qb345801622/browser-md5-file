@@ -7,7 +7,7 @@ MD5 file in browser. Base on [js-spark-md5](https://github.com/satazor/js-spark-
 [demo](http://forsigner.com/browser-md5-file)
 
 
-### Install
+### Installation
 
 #### bower
 
