@@ -3,12 +3,14 @@
 var SparkMD5 = require('spark-md5');
 
 module.exports = function (file, callback, progressCallback) {
+	var self = this;
     var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
     var chunkSize = 2097152;
     var chunks = Math.ceil(file.size / chunkSize);
     var currentChunk = 0;
     var spark = new SparkMD5.ArrayBuffer();
     var reader = new FileReader();
+	var aborted = false;
 
     loadNext();
 
@@ -22,11 +24,18 @@ module.exports = function (file, callback, progressCallback) {
             progressCallback(progress);
         }
 
-        if (currentChunk < chunks) {
-            loadNext();
-        } else {
-            callback(null, spark.end());
-        }
+		if(aborted)
+		{
+	        if (currentChunk < chunks) {
+	            loadNext();
+	        } else {
+	            callback(null, spark.end());
+	        }
+		}
+		else
+		{
+			callback(null, "skipped");
+		}
     };
 
     reader.onerror = function () {
@@ -40,5 +49,9 @@ module.exports = function (file, callback, progressCallback) {
 
         reader.readAsArrayBuffer(blobSlice.call(file, start, end));
     }
-
+	
+	self.abort = function abort() {
+		aborted = true;
+	}
 };
+
