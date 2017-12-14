@@ -727,42 +727,52 @@ var browserMD5File = require('./browser-md5-file');
 var SparkMD5 = require('spark-md5');
 
 module.exports = function (file, callback, progressCallback) {
-    var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
-    var chunkSize = 2097152;
-    var chunks = Math.ceil(file.size / chunkSize);
-    var currentChunk = 0;
-    var spark = new SparkMD5.ArrayBuffer();
-    var reader = new FileReader();
+  var self = this;
+  var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
+  var chunkSize = 2097152;
+  var chunks = Math.ceil(file.size / chunkSize);
+  var currentChunk = 0;
+  var spark = new SparkMD5.ArrayBuffer();
+  var reader = new FileReader();
+  var aborted = false;
 
-    loadNext();
+  loadNext();
 
-    reader.onloadend = function (e) {
-        spark.append(e.target.result); // Append array buffer
-        currentChunk++;
+  reader.onloadend = function (e) {
+    spark.append(e.target.result); // Append array buffer
+    currentChunk++;
 
-        if (progressCallback !== null && typeof progressCallback === "function") {
-            var progress = currentChunk / chunks;
-            progressCallback(progress);
-        }
-
-        if (currentChunk < chunks) {
-            loadNext();
-        } else {
-            callback(null, spark.end());
-        }
-    };
-
-    reader.onerror = function () {
-        callback('oops, something went wrong.');
-    };
-
-    /////////////////////////
-    function loadNext() {
-        var start = currentChunk * chunkSize;
-        var end = start + chunkSize >= file.size ? file.size : start + chunkSize;
-
-        reader.readAsArrayBuffer(blobSlice.call(file, start, end));
+    if (progressCallback !== null && typeof progressCallback === "function") {
+      var progress = currentChunk / chunks;
+      progressCallback(progress);
     }
+
+    if (aborted) {
+      if (currentChunk < chunks) {
+        loadNext();
+      } else {
+        callback(null, spark.end());
+      }
+    } else {
+      callback(null, "skipped");
+    }
+  };
+
+  reader.onerror = function () {
+    callback('oops, something went wrong.');
+  };
+
+  /////////////////////////
+  function loadNext() {
+    var start = currentChunk * chunkSize;
+    var end = start + chunkSize >= file.size ? file.size : start + chunkSize;
+
+    reader.readAsArrayBuffer(blobSlice.call(file, start, end));
+  }
+
+  self.abort = function abort() {
+    aborted = true;
+  };
 };
 
 },{"spark-md5":1}]},{},[2]);
