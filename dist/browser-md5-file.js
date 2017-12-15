@@ -706,74 +706,88 @@
 },{}],2:[function(require,module,exports){
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var BrowserMD5File = require('./browser-md5-file');
 
-var browserMD5File = require('./browser-md5-file');
-
-(function (factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object') {
-    window.browserMD5File = factory();
-  }
-})(function () {
-  return browserMD5File;
-});
+if (typeof define === 'function' && define.amd) {
+    define([], function () {
+        return BrowserMD5File;
+    });
+} else {
+    window.BrowserMD5File = BrowserMD5File;
+}
 
 },{"./browser-md5-file":3}],3:[function(require,module,exports){
 'use strict';
 
-var SparkMD5 = require('spark-md5');
+(function () {
+    var SparkMD5 = require('spark-md5');
+    var BrowserMD5File = function () {
+        var BrowserMD5File = function BrowserMD5File(file, callback) {
+            var self = this;
+            self.aborted = false;
+            self.progress = 0;
+            var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
+            var chunkSize = 2097152;
+            var chunks = Math.ceil(file.size / chunkSize);
+            var currentChunk = 0;
+            var spark = new SparkMD5.ArrayBuffer();
+            var reader = new FileReader();
 
-module.exports.prototype = function (file, callback) {
-    var self = module.exports.prototype;
-    self.aborted = false;
-    self.progress = 0;
+            loadNext();
 
-    var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
-    var chunkSize = 2097152;
-    var chunks = Math.ceil(file.size / chunkSize);
-    var currentChunk = 0;
-    var spark = new SparkMD5.ArrayBuffer();
-    var reader = new FileReader();
+            reader.onloadend = function (e) {
+                spark.append(e.target.result); // Append array buffer
+                currentChunk++;
+                self.progress = currentChunk / chunks;
 
-    loadNext();
+                if (!self.aborted) {
+                    if (currentChunk < chunks) {
+                        loadNext();
+                    } else {
+                        callback(null, spark.end());
+                    }
+                } else {
+                    callback(null, "skipped");
+                }
+            };
 
-    reader.onloadend = function (e) {
-        spark.append(e.target.result); // Append array buffer
-        currentChunk++;
-
-        if (progressCallback !== null && typeof progressCallback === "function") {
-            self.progress = currentChunk / chunks;
-        }
-
-        if (!module.exports.aborted) {
-            if (currentChunk < chunks) {
-                loadNext();
-            } else {
-                callback(null, spark.end());
+            /////////////////////////
+            function loadNext() {
+                var start = currentChunk * chunkSize;
+                var end = start + chunkSize >= file.size ? file.size : start + chunkSize;
+                reader.readAsArrayBuffer(blobSlice.call(file, start, end));
             }
+        };
+
+        BrowserMD5File.prototype.abort = function () {
+            var self = this;
+            self.aborted = true;
+        };
+
+        BrowserMD5File.prototype.getProgress = function (inPercent) {
+            var self = this;
+            var progress = self.progress;
+            if (inPercent) {
+                return Math.round(progress * 100);
+            } else {
+                return progress;
+            }
+        };
+
+        return BrowserMD5File;
+    }();
+
+    if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+        module.exports = BrowserMD5File;
+    } else {
+        if (typeof define === 'function' && define.amd) {
+            define([], function () {
+                return BrowserMD5File;
+            });
         } else {
-            callback(null, "skipped");
+            window.BrowserMD5File = BrowserMD5File;
         }
-    };
-
-    reader.onerror = function () {
-        callback('oops, something went wrong.');
-    };
-
-    /////////////////////////
-    function loadNext() {
-        var start = currentChunk * chunkSize;
-        var end = start + chunkSize >= file.size ? file.size : start + chunkSize;
-
-        reader.readAsArrayBuffer(blobSlice.call(file, start, end));
     }
-};
-
-module.exports.prototype.abort = function () {
-    var self = this;
-    self.aborted = true;
-};
+})();
 
 },{"spark-md5":1}]},{},[2]);
