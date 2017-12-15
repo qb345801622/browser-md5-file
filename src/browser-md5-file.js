@@ -24,7 +24,7 @@ module.exports = function (file, callback, progressCallback) {
             progressCallback(progress);
         }
 
-		if(aborted)
+		if(!aborted)
 		{
 	        if (currentChunk < chunks) {
 	            loadNext();
