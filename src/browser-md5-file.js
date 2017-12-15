@@ -10,7 +10,6 @@ module.exports = function (file, callback, progressCallback) {
     var currentChunk = 0;
     var spark = new SparkMD5.ArrayBuffer();
     var reader = new FileReader();
-	var aborted = false;
 
     loadNext();
 
@@ -24,7 +23,7 @@ module.exports = function (file, callback, progressCallback) {
             progressCallback(progress);
         }
 
-		if(!aborted)
+		if(!module.exports.aborted)
 		{
 	        if (currentChunk < chunks) {
 	            loadNext();
@@ -49,9 +48,11 @@ module.exports = function (file, callback, progressCallback) {
 
         reader.readAsArrayBuffer(blobSlice.call(file, start, end));
     }
-	
-	self.abort = function abort() {
-		aborted = true;
-	}
+};
+
+module.exports.aborted = false;
+
+module.exports.abort = function() {
+	module.exports.aborted = true;
 };
 
