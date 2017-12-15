@@ -717,7 +717,6 @@ var browserMD5File = require('./browser-md5-file');
     window.browserMD5File = factory();
   }
 })(function () {
-
   return browserMD5File;
 });
 
@@ -726,8 +725,11 @@ var browserMD5File = require('./browser-md5-file');
 
 var SparkMD5 = require('spark-md5');
 
-module.exports = function (file, callback, progressCallback) {
-    var self = this;
+module.exports.prototype = function (file, callback) {
+    var self = module.exports.prototype;
+    self.aborted = false;
+    self.progress = 0;
+
     var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
     var chunkSize = 2097152;
     var chunks = Math.ceil(file.size / chunkSize);
@@ -742,8 +744,7 @@ module.exports = function (file, callback, progressCallback) {
         currentChunk++;
 
         if (progressCallback !== null && typeof progressCallback === "function") {
-            var progress = currentChunk / chunks;
-            progressCallback(progress);
+            self.progress = currentChunk / chunks;
         }
 
         if (!module.exports.aborted) {
@@ -770,10 +771,9 @@ module.exports = function (file, callback, progressCallback) {
     }
 };
 
-module.exports.aborted = false;
-
-module.exports.abort = function () {
-    module.exports.aborted = true;
+module.exports.prototype.abort = function () {
+    var self = this;
+    self.aborted = true;
 };
 
 },{"spark-md5":1}]},{},[2]);

@@ -9,6 +9,5 @@ var browserMD5File = require('./browser-md5-file');
     window.browserMD5File = factory();
   }
 }(function () {
-
   return browserMD5File;
 }));
