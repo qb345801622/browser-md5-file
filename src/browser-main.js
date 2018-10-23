@@ -1,14 +1,14 @@
 'use strict';
 
-var browserMD5File = require('./browser-md5-file');
+var BrowserMD5File = require('./browser-md5-file');
 
-(function (factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof window === 'object') {
-    window.browserMD5File = factory();
-  }
-}(function () {
+if (typeof define === 'function' && define.amd) {
+    define([], function() {
+        return BrowserMD5File;
+    });
+}
+else {
+    window.BrowserMD5File = BrowserMD5File;
+}
 
-  return browserMD5File;
-}));
+
