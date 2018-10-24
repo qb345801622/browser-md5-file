@@ -1,4 +1,4 @@
-# browser-md5-file [![Build Status](https://travis-ci.org/forsigner/browser-md5-file.svg?branch=master)](https://travis-ci.org/forsigner/browser-md5-file) [![NPM Version](http://img.shields.io/npm/v/browser-md5-file.svg?style=flat)](https://www.npmjs.org/package/browser-md5-file)
+# browser-md5-file [![NPM Version](http://img.shields.io/npm/v/browser-md5-file.svg?style=flat)](https://www.npmjs.org/package/browser-md5-file)
 
 MD5 file in browser. Base on [js-spark-md5](https://github.com/satazor/js-spark-md5).
 
@@ -8,10 +8,7 @@ MD5 file in browser. Base on [js-spark-md5](https://github.com/satazor/js-spark-
 
 ### Installation
 
-#### npm
-
-```bash
-$ npm install browser-md5-file --save
+$ npm i browser-md5-file -S
 ```
 
 ### Usage
@@ -25,7 +22,7 @@ const bmf = new BMF();
 el.addEventListener('change', handle, false);
 
 function handle(e) {
-  var file = e.target.files[0];
+  const file = e.target.files[0];
   bmf.md5(
     file,
     (err, md5) => {
