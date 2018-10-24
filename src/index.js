@@ -46,13 +46,4 @@ export default class BMF {
   abort() {
     this.aborted = true;
   }
-
-  getProgress(inPercent) {
-    const progress = this.progress;
-    if (inPercent) {
-      return Math.round(progress * 100);
-    } else {
-      return progress;
-    }
-  }
 }
