@@ -8,6 +8,7 @@ MD5 file in browser. Base on [js-spark-md5](https://github.com/satazor/js-spark-
 
 ### Installation
 
+```bash
 $ npm i browser-md5-file -S
 ```
 
