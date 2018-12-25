@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import BMF from 'browser-md5-file';
+import BMF from './src';
 
 import './css/App.css';
 
